@@ -1,6 +1,6 @@
 * eijiro
 
-英辞郎テキスト版を ripgrep で検索する Emacs-Lisp プログラムです。
+英辞郎テキスト版を *ripgrep* で検索する Emacs-Lisp プログラムです。
 
 [[file:eijiro.png]]
 
@@ -20,17 +20,19 @@
 
    3) 辞書の文字エンコーディングを utf-8 に変換
 
-      nkf を利用して文字エンコーディグを変更します。
+      *nkf* を利用して文字エンコーディグを変更します。
 
+      #+begin_src shell
       % nkf -w8 -Lu EIJIRO-144x.TXT > ~/etc/eijiro-144x.utf-8
+      #+end_src
 
       ここでは、改行コードも CRLF -> LF に変換しています。
 
    4) eijiro.el のインストール
 
-      load-path の通った場所に、eijiro.el を配置します。
+      *load-path* の通った場所に、eijiro.el を配置します。
 
-      変数 `eijiro-dictionary' に、英辞郎テキスト版(utf-8)のパスを指定
+      変数 =eijiro-dictionary= に、英辞郎テキスト版(utf-8)のパスを指定
       します。
 
       #+begin_src emacs-lisp
@@ -42,9 +44,8 @@
 
    1) 基本
 
-      : M-x eijiro-lookup RET
-
-      とすると、カーソル付近の語を自動的に拾って検索してしまいます。
+      =M-x eijiro-lookup RET= とすると、カーソル付近の語を自動的に拾っ
+      て検索してしまいます。
 
       明示的に検索したい語を入力する場合には、何もない場所にカーソルを
       移動してからにしてください。
@@ -95,34 +96,34 @@
 
 *** 検索関連
 
-   - 変数: `eijiro-rg-arguments'
+   - 変数: =eijiro-rg-arguments=
 
      ripgrep の引数を設定できます。
 
-   - 変数: `eijiro-rg-max-count'
+   - 変数: =eijiro-rg-max-count=
 
      デフォルトの検索モードは幅広くヒットするので、"the" など辞書に頻
      出する語を検索すると膨大な数になり、時間もかかってしまいます。
 
-     これを回避するために、変数 `eijiro-rg-max-count' で検索結果の上限
+     これを回避するために、変数 =eijiro-rg-max-count= で検索結果の上限
      を設定できます。デフォルトは 500 ですが、足りないようなら増やして
      ください。
 
 *** 見た目関連
 
-    - 変数: `eijiro-window-height'
+    - 変数: =eijiro-window-height=
 
      検索結果ウィンドウの行数を設定できます。
 
-    - フェイス: `eijiro-entry-face'
+    - フェイス: =eijiro-entry-face=
 
       見出し語用のフェイスです。
 
-    - フェイス: `eijiro-block-face'
+    - フェイス: =eijiro-block-face=
 
       ブロック(補足や例文など)用のフェイスです。
 
-    - フェイス: `eijiro-match-face'
+    - フェイス: =eijiro-match-face=
 
       検索に一致した語をハイライトするためのフェイスです。
 
@@ -146,10 +147,10 @@
 
     デフォルトの整形は最低限のもので、あまり凝ったことはしていません。
 
-    これが気にいらない場合には、変数 `eijiro-beautify-functions' を設
+    これが気にいらない場合には、変数 =eijiro-beautify-functions= を設
     定することで徹底的に整形することができます。
 
-    詳細については、関数 `eijiro--display-result' を参照してください。
+    詳細については、関数 =eijiro--display-result= を参照してください。
 
 ** 既知の制限事項
 
