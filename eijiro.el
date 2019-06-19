@@ -353,9 +353,8 @@
              (3 (lambda (word) ":suffix" (concat "\\B" word "\\b")))
              (_ (lambda (word) "" word))))
           (thing (thing-at-point 'word 'no-properties))
-          (word (or thing
-                    (read-from-minibuffer
-                     (format "[eijiro%s] " (documentation transformer))))))
+          (prompt (format "[eijiro%s] " (documentation transformer t)))
+          (word (or thing (read-from-minibuffer prompt))))
      (list (funcall transformer word))))
   (eijiro--check-configuration)
   (eijiro--kill-old-window)
