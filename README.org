@@ -2,7 +2,7 @@
 
 英辞郎テキスト版を ripgrep で検索する Emacs-Lisp プログラムです。
 
-file:eijiro.png
+[[file:eijiro.png]]
 
 ** インストール
 
@@ -140,7 +140,7 @@ file:eijiro.png
     (add-hook 'eijiro-mode-hook 'emojify-mode)
     #+end_src
 
-    file:custom.png
+    [[file:custom.png]]
 
 *** 検索結果を整形する
 
