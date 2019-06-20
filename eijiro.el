@@ -4,7 +4,7 @@
 ;;
 ;; Author: Tomotaka SUWA <tomotaka.suwa@gmail.com>
 ;; Version: 0.1.0
-;; Package-Version: 20190611.000
+;; Package-Version: 20190620.000
 ;; Package-Requires: ((emacs "25"))
 ;; Keywords : convenience matching processes
 ;; URL: https://github.com/t-suwa/eijiro/
@@ -95,7 +95,9 @@
   :group 'eijiro)
 
 (defcustom eijiro-rg-arguments
-  (list "--ignore-case")
+  (list "--ignore-case"
+        "--color=ansi"
+        "--colors=match:bg:red")
   "Default arguments passed to eijiro-rg-command."
   :type '(repeat (string))
   :group 'eijiro)
@@ -145,7 +147,8 @@
 (defcustom eijiro-beautify-functions
   '(eijiro-beautify-remove-heading
     eijiro-beautify-examples
-    eijiro-beautify-annotations)
+    eijiro-beautify-annotations
+    eijiro-beautify-matches)
   "A list of beautify functions for search result."
   :type '(repeat function)
   :group 'eijiro)
@@ -160,40 +163,17 @@
   "◆"
   "Start indicator for annotations.")
 
+(defconst eijiro-regexp-highlight
+  (let ((escape-sequence "[[:cntrl:]]\\{1\\}[^m[:cntrl:]]+m")
+        (word "\\([^[:cntrl:]]+\\)"))
+    (format "\\(\\(?:%s\\)\\{4\\}\\)%s\\(%s\\)"
+            escape-sequence word escape-sequence))
+  "Regexp for highlight.")
+
 ;; Buffer local variables
 
 (defvar-local eijiro-current-action ""
   "Current searching action.")
-
-(defvar-local eijiro-current-word ""
-  "Current searching word.")
-
-;; Beautify functions
-
-(defun eijiro-beautify-remove-heading ()
-  "Remove a first character on each line."
-  (while (not (eobp))
-    (delete-char 1)
-    (forward-line)))
-
-(defun eijiro-beautify-annotations ()
-  "Place annotations to new line."
-  (let ((regexp (format "\\(%s\\)"
-                        eijiro-annotation-start-indicator)))
-    (while (re-search-forward regexp nil t)
-      (replace-match (concat "\n" eijiro-block-label eijiro-annotation-label)))))
-
-(defun eijiro-beautify-examples ()
-  "Place example sentences to new line."
-  (let ((regexp (format "%s.\\([^[:multibyte:]]+\\)\\([^%s]+\\)"
-                        eijiro-example-start-indicator
-                        eijiro-example-start-indicator))
-        (replace (format "\n%s%s\t\\1\n%s\t\\2"
-                         eijiro-block-label
-                         eijiro-example-label
-                         eijiro-block-label)))
-    (while (re-search-forward regexp nil t)
-      (replace-match replace))))
 
 ;; Faces
 
@@ -234,6 +214,42 @@
   (setq font-lock-defaults '(eijiro-font-lock-keywords
                              keywords-only
                              ignore-case)))
+
+;; Beautify functions
+
+(defun eijiro-beautify-remove-heading ()
+  "Remove a first character on each line."
+  (while (not (eobp))
+    (delete-char 1)
+    (forward-line)))
+
+(defun eijiro-beautify-annotations ()
+  "Place annotations to new line."
+  (let ((regexp (format "\\(%s\\)"
+                        eijiro-annotation-start-indicator)))
+    (while (re-search-forward regexp nil t)
+      (replace-match (concat "\n" eijiro-block-label eijiro-annotation-label)))))
+
+(defun eijiro-beautify-examples ()
+  "Place example sentences to new line."
+  (let ((regexp (format "%s.\\([^[:multibyte:]]+\\)\\([^%s]+\\)"
+                        eijiro-example-start-indicator
+                        eijiro-example-start-indicator))
+        (replace (format "\n%s%s\t\\1\n%s\t\\2"
+                         eijiro-block-label
+                         eijiro-example-label
+                         eijiro-block-label)))
+    (while (re-search-forward regexp nil t)
+      (replace-match replace))))
+
+(defun eijiro-beautify-matches ()
+  "Highlight matched words."
+  (let ((regexp eijiro-regexp-highlight))
+    (while (re-search-forward regexp nil t nil)
+      (let ((match (make-overlay (match-beginning 0)
+                                 (match-end 0))))
+        (overlay-put match 'face 'eijiro-match-face)
+        (replace-match "\\2")))))
 
 ;; Internal functions
 
@@ -279,13 +295,11 @@
 (defun eijiro--display-result ()
   "Display search result."
   (with-current-buffer (eijiro--buffer)
-    (let ((inhibit-read-only t)
-          (word eijiro-current-word))
+    (let ((inhibit-read-only t))
       (eijiro-mode)
       (goto-char (point-min))
       (dolist (func eijiro-beautify-functions)
         (save-excursion (funcall func)))
-      (highlight-regexp word 'eijiro-match-face)
       (force-mode-line-update)
       (set-window-point
        (select-window
@@ -329,7 +343,6 @@
   (with-current-buffer (eijiro--buffer)
     (let ((inhibit-read-only t))
       (erase-buffer)
-      (setq eijiro-current-word word)
       (setq eijiro-current-action (format "Searching \"%s\"" word))
       (message (concat eijiro-current-action " ..."))
       (make-process :name "eijiro"
