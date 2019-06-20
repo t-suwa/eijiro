@@ -244,11 +244,13 @@
 
 (defun eijiro-beautify-matches ()
   "Highlight matched words."
-  (let ((regexp eijiro-regexp-highlight))
+  (let ((regexp eijiro-regexp-highlight)
+        word-list)
     (while (re-search-forward regexp nil t nil)
-      (let ((match (make-overlay (match-beginning 0)
-                                 (match-end 0))))
-        (overlay-put match 'face 'eijiro-match-face)
+      (let ((word (match-string-no-properties 2)))
+        (unless (member-ignore-case word word-list)
+          (highlight-regexp word 'eijiro-match-face)
+          (push word word-list))
         (replace-match "\\2")))))
 
 ;; Internal functions
