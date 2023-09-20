@@ -219,9 +219,10 @@
 ;; Beautify functions
 
 (defun eijiro-beautify-remove-heading ()
-  "Remove a first character on each line."
+  "Remove start indicator on each line."
   (while (not (eobp))
-    (delete-char 1)
+    (if (re-search-forward eijiro-example-start-indicator (line-end-position))
+        (replace-match ""))
     (forward-line)))
 
 (defun eijiro-beautify-annotations ()
