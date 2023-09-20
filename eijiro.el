@@ -95,7 +95,8 @@
   :group 'eijiro)
 
 (defcustom eijiro-rg-arguments
-  (list "--ignore-case"
+  (list "--no-line-number"
+        "--ignore-case"
         "--color=ansi"
         "--colors=match:bg:red")
   "Default arguments passed to eijiro-rg-command."
