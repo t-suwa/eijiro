@@ -373,7 +373,8 @@
                           (buffer-substring-no-properties (region-beginning)
                                                           (region-end)))
                      (thing-at-point 'word 'no-properties)))
-          (prompt (format "[eijiro%s] " (documentation transformer t)))
+          (prompt (format "[eijiro%s] "
+                          (car (string-lines (documentation transformer t)))))
           (word (or thing (read-from-minibuffer prompt))))
      (list (funcall transformer word))))
   (eijiro--check-configuration)
