@@ -147,9 +147,9 @@
 
 (defcustom eijiro-beautify-functions
   '(eijiro-beautify-remove-heading
+    eijiro-beautify-matches
     eijiro-beautify-examples
-    eijiro-beautify-annotations
-    eijiro-beautify-matches)
+    eijiro-beautify-annotations)
   "A list of beautify functions for search result."
   :type '(repeat function)
   :group 'eijiro)
