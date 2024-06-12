@@ -1,10 +1,10 @@
 ;;; eijiro.el --- Look up a word in the eijiro dictionary. -*- lexical-binding:t -*-
 
-;; Copyright (C) 2019-2023 Tomotaka SUWA <tomotaka.suwa@gmail.com>
+;; Copyright (C) 2019-2024 Tomotaka SUWA <tomotaka.suwa@gmail.com>
 ;;
 ;; Author: Tomotaka SUWA <tomotaka.suwa@gmail.com>
-;; Version: 0.1.1
-;; Package-Version: 20230921.000
+;; Version: 0.1.2
+;; Package-Version: 20240612.000
 ;; Package-Requires: ((emacs "25"))
 ;; Keywords : convenience matching processes
 ;; URL: https://github.com/t-suwa/eijiro/
